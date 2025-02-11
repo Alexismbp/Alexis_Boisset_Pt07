@@ -1,0 +1,66 @@
+version: "3.8"
+
+services:
+  nginx-proxy:
+    image: jwilder/nginx-proxy
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+    networks:
+      - nginx-network
+
+  laravel-app:
+    image: bitnami/laravel:latest
+    volumes:
+      - ./mi-proyecto:/app # Monta tu proyecto Laravel aquí
+    environment:
+      - VIRTUAL_HOST=proyecto.test # Dominio principal
+      - VIRTUAL_PORT=8000
+      - DB_HOST=mysql
+      - DB_PORT=3306
+      - DB_DATABASE=laravel_db
+      - DB_USERNAME=laravel_user
+      - DB_PASSWORD=laravel_password
+      - LARAVEL_SKIP_DATABASE_CHECK=true # Evita errores durante el primer inicio
+    depends_on:
+      - mysql
+    networks:
+      - nginx-network
+      - internal-network
+
+  mysql:
+    image: bitnami/mariadb:latest
+    environment:
+      - MARIADB_ROOT_PASSWORD=root_password
+      - MARIADB_DATABASE=laravel_db
+      - MARIADB_USER=laravel_user
+      - MARIADB_PASSWORD=laravel_password
+    volumes:
+      - mysql_data:/bitnami/mariadb
+    networks:
+      - internal-network
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    environment:
+      - PMA_HOST=mysql
+      - PMA_USER=laravel_user
+      - PMA_PASSWORD=laravel_password
+      - VIRTUAL_HOST=phpmyadmin.test # Dominio para phpMyAdmin
+    depends_on:
+      - mysql
+    networks:
+      - nginx-network
+      - internal-network
+
+volumes:
+  mysql_data:
+    driver: local
+
+networks:
+  nginx-network:
+    driver: bridge
+  internal-network:
+    driver: bridge

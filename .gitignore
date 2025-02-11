@@ -1,23 +1,44 @@
-/.phpunit.cache
+# Laravel estándar
 /node_modules
-/public/build
 /public/hot
 /public/storage
 /storage/*.key
-/storage/pail
 /vendor
 .env
 .env.backup
-.env.production
-.phpactor.json
 .phpunit.result.cache
+docker-compose.override.yml  # No subir configuraciones locales
 Homestead.json
 Homestead.yaml
 npm-debug.log
 yarn-error.log
-/auth.json
 /.fleet
 /.idea
-/.nova
 /.vscode
-/.zed
+
+# macOS
+.DS_Store
+._*
+.Spotlight-V100
+.Trashes
+
+# Docker (elementos a excluir)
+docker-compose.prod.yml  # Si tienes config específica de producción
+docker-data/             # Volúmenes locales
+*.tar.gz                 # Backups de contenedores
+
+# VS Code
+!.vscode/settings.json.example  # Ejemplo opcional
+!.vscode/tasks.json.example
+.vscode/*
+!.vscode/extensions.json
+
+# Archivos temporales de Laravel
+bootstrap/cache/*
+!bootstrap/cache/.gitkeep
+
+# Tests y coverage
+.coverage
+.coverage/
+coverage/
+.phpunit.cache
